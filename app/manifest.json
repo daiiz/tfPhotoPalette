@@ -7,9 +7,9 @@
   "minimum_chrome_version": "38",
 
   "icons": {
-    "16" : "seed-icon.png",
-    "48" : "seed-icon.png",
-    "128": "seed-icon.png"
+    "16" : "icon.png",
+    "48" : "icon.png",
+    "128": "icon.png"
   },
 
   "app": {
