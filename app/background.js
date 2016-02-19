@@ -1,6 +1,6 @@
 chrome.app.runtime.onLaunched.addListener(function (launchData) {
-    var DEFAULT_WIDTH  = 900;
-    var DEFAULT_HEIGHT = 786;
+    var DEFAULT_WIDTH  = 1145;
+    var DEFAULT_HEIGHT = 785;
     chrome.storage.local.get(["main_window_width", "main_window_height"], function (items) {
         var w = items["main_window_width"]  || DEFAULT_WIDTH;
         var h = items["main_window_height"] || DEFAULT_HEIGHT;
