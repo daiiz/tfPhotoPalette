@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Photo Cropper</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="lib/jquery-ui.min.css">
+        <script src="lib/jquery.js"></script>
+        <script src="lib/jquery-ui.min.js"></script>
+        <script src="lib/mousetrap.js"></script>
+    </head>
+    <body>
+        <div id="head">
+            <div id="title">PhotoCropper</div>
+            <button id="btn-export-keptImgs">Export</button>
+            <a href="" id="export-dl">Download</a>
+            <input type="file" id="btn-import-keptImgs">
+        </div>
+        <div id="sub-head">
+            <input type="text" id="photo-uri" placeholder="Photo URI">
+            <button id="btn-photo-uri">Load</button>
+            <input type="text" id="photo-labels" placeholder="Photo labels (,)">
+            <button id="btn-update-labels">Update labels</button>
+            <button id="btn-remove-photo">Remove this photo</button>
+        </div>
+        <div id="collect-area">
+            <!-- .keep-cropped-img -->
+        </div>
+        <div id="ce-main">
+            <div id="editor">
+                <canvas class='org'></canvas>
+                <div id="cropper">
+                </div>
+            </div>
+            <div id="crop">
+                <canvas class='crop'></canvas>
+            </div>
+            <div id="minfy">
+                <canvas class='minfy'></canvas>
+            </div>
+            <div id="line">
+            </div>
+            <div id="line-v">
+            </div>
+            <input type="number" placeholder="px" value="" id="resH">
+            <input type="number" placeholder="px" value="" id="resW">
+        </div>
+        <script src="index.es5.js"></script>
+        <script src="seed.js"></script>
+    </body>
+</html>

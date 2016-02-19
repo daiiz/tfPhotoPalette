@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "PhotoCropper",
+  "short_name": "PhotoCropper",
+  "description": "... ML!",
+  "version": "0.0.1",
+  "minimum_chrome_version": "38",
+
+  "icons": {
+    "16" : "seed-icon.png",
+    "48" : "seed-icon.png",
+    "128": "seed-icon.png"
+  },
+
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+
+  "permissions": ["storage", "unlimitedStorage", "<all_urls>"]
+}
