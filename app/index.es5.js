@@ -363,7 +363,6 @@ var CanvasEditor = (function () {
                 }
                 res = JSON.stringify({ items: res, version: _this2.version_photo_cropper }, null, 4);
                 var blob = new Blob([res], { type: 'text/plain' });
-                console.info(res);
                 var url = window.webkitURL.createObjectURL(blob);
                 var d = new Date();
                 var fname = 'photocropper-' + d.getTime() + '.json';
