@@ -376,7 +376,6 @@ class CanvasEditor {
             }
             res = JSON.stringify({items: res, version: this.version_photo_cropper}, null, 4);
             var blob = new Blob([res], {type: 'text/plain'});
-            console.info(res);
             var url = window.webkitURL.createObjectURL(blob);
             var d = new Date();
             var fname = `photocropper-${d.getTime()}.json`;
