@@ -20,6 +20,18 @@ var openPlayWindow = () => {
     }, null);
 }
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    // PlayWindowから受信する
+    if (request.type === 'request-base64-img') {
+        var base64code = $('.minfy')[0].toDataURL('image/jpeg');
+        // PlayWindowに返答する
+        chrome.runtime.sendMessage({
+            type: "base64-img",
+            body: base64code
+        }, null);
+    }
+});
+
 $(function () {
     var canvasEditor = new CanvasEditor($('#editor'), $('#crop'), $('#minfy'));
     canvasEditor.src = 'sample.jpg';
