@@ -298,14 +298,19 @@ class CanvasEditor {
     }
 
     bindEvents () {
+        // 切り取り高さの変更を反映する
         $('#resH').on('change', (e) => {
             var h = +e.target.value;
             this.setResHeight(h);
         });
+
+        // 切り取り幅の変更を反映する
         $('#resW').on('change', (e) => {
             var w = +e.target.value;
             this.setResWidth(w);
         });
+
+        // 入力されたURLの画像を読み込む
         $('#btn-photo-uri').on('click', (e) => {
             var uri = $('#photo-uri')[0].value || '';
             if (uri !== '') {
@@ -313,8 +318,16 @@ class CanvasEditor {
                 this.highlightSelectedGalleryImage(null);
             }
         });
+
+        // 画像URL入力欄をクリアして，フォーカスする
         $('#head').on('click', (e) => {
+            $('#photo-uri')[0].value = '';
             $('#photo-uri')[0].focus();
+        });
+
+        // 画像URL入力欄をクリアする
+        $('#photo-uri').on('click', (e) => {
+            $('#photo-uri')[0].value = '';
         });
 
         // ギャラリーに追加する
