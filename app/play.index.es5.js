@@ -41,12 +41,18 @@ var showDetailJSON = function showDetailJSON(json) {
 
 // 分類実行
 var classify = function classify(base64jpg) {
-    var appUrl = 'http://localhost:8000/';
+    $('#ans').text('');
+    var appUrl = 'http://localhost:8000/api/classify';
     $.ajax({
         url: appUrl,
-        data: { jpg: base64jpg },
+        data: JSON.stringify({
+            jpg: base64jpg
+        }),
         type: "POST",
+        contentType: 'application/json',
         success: function success(response) {
+            showDetailJSON(response);
+            $('#ans').text(response.description);
             console.log(response);
         },
         error: function error(response) {

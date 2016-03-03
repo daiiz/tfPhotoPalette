@@ -23,7 +23,7 @@ body {
 
 #btn-classify {
     position: relative;
-    top: 16px;
+    top: 20px;
     left: 22px;
 }
 
@@ -65,4 +65,12 @@ body {
     display: inline-block;
     top: 12px;
     left: 54px;
+}
+
+.jsonview .string {
+    color: #FF8F00 !important;
+}
+
+.jsonview .bool, .jsonview .num {
+    color: #FF6F00 !important;
 }

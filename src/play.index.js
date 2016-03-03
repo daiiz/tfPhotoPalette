@@ -39,24 +39,24 @@ var showDetailJSON = (json) => {
 
 // 分類実行
 var classify = (base64jpg) => {
-    var appUrl = 'http://localhost:6000/';
-    var theme = $('#input-theme')[0].value || '';
-    if (theme !== '') {
-        $.ajax({
-            url: appUrl,
-            data: {
-                jpg: base64jpg,
-                theme: theme
-            },
-            type: "POST",
-            success: function (response) {
-                console.log(response);
-            },
-            error: function (response) {
-                console.info(response);
-            }
-        });
-    }
+    $('#ans').text('');
+    var appUrl = 'http://localhost:8000/api/classify';
+    $.ajax({
+        url: appUrl,
+        data: JSON.stringify({
+            jpg: base64jpg
+        }),
+        type: "POST",
+        contentType:'application/json',
+        success: function (response) {
+            showDetailJSON(response);
+            $('#ans').text(response.description);
+            console.log(response);
+        },
+        error: function (response) {
+            console.info(response);
+        }
+    });
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

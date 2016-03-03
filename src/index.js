@@ -14,8 +14,8 @@ var openPlayWindow = () => {
         outerBounds: {
             left: 300,
             top : 20,
-            width : 300,
-            height: 460
+            width : 350,
+            height: 300
         }
     }, null);
 }
