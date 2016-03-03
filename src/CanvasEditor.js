@@ -178,27 +178,42 @@ class CanvasEditor {
         this.imageUri = val;
         var canvas = this.$canvas[0];
         var stage = this.$stage[0];
+        var photoUrlBox = $('#photo-uri')[0];
         var self = this;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', val, true);
-        xhr.responseType = 'blob';
-        xhr.onload = function (e) {
-            var img = new Image();
-            img.className = 'original';
-            img.onload = () => {
-                self.editCtxImg = img;
-                var w = img.offsetWidth;
-                var h = img.offsetHeight;
-                var size = self._setSize(w, h, canvas, stage);
-                self.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
-                self.updateCropCtx();
-                self.setCanvasPosition();
-            }
-            img.src = window.URL.createObjectURL(this.response);
-            self.$stage[0].appendChild(img);
-        };
-        xhr.send();
+        if (val.match(/^data:image.*/)) {
+            // base64エンコードされた画像を表示
+            var img = $('#hidden-img')[0];
+            img.onload = function (e) {
+                self._src(img, canvas, stage);
+            };
+            img.src = val;
+        }else {
+            // 画像のURLにアクセスして表示
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', val, true);
+            xhr.responseType = 'blob';
+            xhr.onload = function (e) {
+                var img = new Image();
+                img.className = 'original';
+                img.onload = () => {
+                    self._src(img, canvas, stage);
+                }
+                img.src = window.URL.createObjectURL(this.response);
+                self.$stage[0].appendChild(img);
+            };
+            xhr.send();
+        }
+    }
+
+    _src (img, canvas, stage) {
+        this.editCtxImg = img;
+        var w = img.offsetWidth;
+        var h = img.offsetHeight;
+        var size = this._setSize(w, h, canvas, stage);
+        this.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
+        this.updateCropCtx();
+        this.setCanvasPosition();
     }
 
     /* 最終的に出力する横幅 */
@@ -416,6 +431,39 @@ class CanvasEditor {
                 });
             }
             fileReader.readAsText(e.target.files[0]);
+        });
+
+        // 画像ファイルをドラッグアンドドロップで読み込む機能
+        this.bindEvents_PhotoDragLoad();
+    }
+
+    bindEvents_PhotoDragLoad () {
+        var self = this;
+
+        // ドロップ領域はタイトルヘッダ
+        $('#head').bind('drop', e => {
+            e.preventDefault();
+            var files = e.originalEvent.dataTransfer.files;
+            var reader = new FileReader();
+            if (files.length <= 0) return false;
+
+            // 複数与えられた場合でも，読み込むのは最初のファイルのみ
+            var file = files[0];
+            // MIMEタイプを確認してからbase64コードに変換する
+            if (!file.type.match('image.*')) return false;
+
+            reader.onload = function (e) {
+                var base64code = e.target.result;
+                $('#photo-uri')[0].value = base64code;
+                // 読み込みボタンを自動クリックする
+                $('#btn-photo-uri').click();
+            }
+
+            reader.readAsDataURL(file);
+        }).bind('dragenter', e => {
+            return false;
+        }).bind('dragover', e => {
+            return false;
         });
     }
 

@@ -197,6 +197,19 @@ var CanvasEditor = (function () {
 
         /* editCtxに画像をセットする */
     }, {
+        key: '_src',
+        value: function _src(img, canvas, stage) {
+            this.editCtxImg = img;
+            var w = img.offsetWidth;
+            var h = img.offsetHeight;
+            var size = this._setSize(w, h, canvas, stage);
+            this.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
+            this.updateCropCtx();
+            this.setCanvasPosition();
+        }
+
+        /* 最終的に出力する横幅 */
+    }, {
         key: 'setResWidth',
         value: function setResWidth(w) {
             if (w > this.maxw / 2) w = this.maxw / 2;
@@ -404,6 +417,40 @@ var CanvasEditor = (function () {
                 };
                 fileReader.readAsText(e.target.files[0]);
             });
+
+            // 画像ファイルをドラッグアンドドロップで読み込む機能
+            this.bindEvents_PhotoDragLoad();
+        }
+    }, {
+        key: 'bindEvents_PhotoDragLoad',
+        value: function bindEvents_PhotoDragLoad() {
+            var self = this;
+
+            // ドロップ領域はタイトルヘッダ
+            $('#head').bind('drop', function (e) {
+                e.preventDefault();
+                var files = e.originalEvent.dataTransfer.files;
+                var reader = new FileReader();
+                if (files.length <= 0) return false;
+
+                // 複数与えられた場合でも，読み込むのは最初のファイルのみ
+                var file = files[0];
+                // MIMEタイプを確認してからbase64コードに変換する
+                if (!file.type.match('image.*')) return false;
+
+                reader.onload = function (e) {
+                    var base64code = e.target.result;
+                    $('#photo-uri')[0].value = base64code;
+                    // 読み込みボタンを自動クリックする
+                    $('#btn-photo-uri').click();
+                };
+
+                reader.readAsDataURL(file);
+            }).bind('dragenter', function (e) {
+                return false;
+            }).bind('dragover', function (e) {
+                return false;
+            });
         }
     }, {
         key: 'highlightSelectedGalleryImage',
@@ -441,30 +488,33 @@ var CanvasEditor = (function () {
             this.imageUri = val;
             var canvas = this.$canvas[0];
             var stage = this.$stage[0];
+            var photoUrlBox = $('#photo-uri')[0];
             var self = this;
 
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', val, true);
-            xhr.responseType = 'blob';
-            xhr.onload = function (e) {
-                var img = new Image();
-                img.className = 'original';
-                img.onload = function () {
-                    self.editCtxImg = img;
-                    var w = img.offsetWidth;
-                    var h = img.offsetHeight;
-                    var size = self._setSize(w, h, canvas, stage);
-                    self.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
-                    self.updateCropCtx();
-                    self.setCanvasPosition();
+            if (val.match(/^data:image.*/)) {
+                // base64エンコードされた画像を表示
+                var img = $('#hidden-img')[0];
+                img.onload = function (e) {
+                    self._src(img, canvas, stage);
                 };
-                img.src = window.URL.createObjectURL(this.response);
-                self.$stage[0].appendChild(img);
-            };
-            xhr.send();
+                img.src = val;
+            } else {
+                // 画像のURLにアクセスして表示
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', val, true);
+                xhr.responseType = 'blob';
+                xhr.onload = function (e) {
+                    var img = new Image();
+                    img.className = 'original';
+                    img.onload = function () {
+                        self._src(img, canvas, stage);
+                    };
+                    img.src = window.URL.createObjectURL(this.response);
+                    self.$stage[0].appendChild(img);
+                };
+                xhr.send();
+            }
         }
-
-        /* 最終的に出力する横幅 */
     }, {
         key: 'width',
         set: function set(val) {
