@@ -40,7 +40,7 @@ var showDetailJSON = (json) => {
 // 分類実行
 var classify = (base64jpg) => {
     $('#ans').text('');
-    var appUrl = 'http://localhost:8000/api/classify';
+    var appUrl = 'http://localhost:52892/api/classify';
     $.ajax({
         url: appUrl,
         data: JSON.stringify({
