@@ -18,5 +18,5 @@
     }
   },
 
-  "permissions": ["storage", "<all_urls>", "http://localhost"]
+  "permissions": ["storage", "<all_urls>"]
 }
