@@ -36,5 +36,4 @@ $(function () {
     var canvasEditor = new CanvasEditor($('#editor'), $('#crop'), $('#minfy'));
     canvasEditor.src = 'sample.jpg';
     bindEvents();
-    openPlayWindow();
 });
