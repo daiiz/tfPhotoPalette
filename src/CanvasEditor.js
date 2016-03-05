@@ -453,8 +453,22 @@ class CanvasEditor {
     bindEvents_PhotoDragLoad () {
         var self = this;
 
+        var setDragDesign = function () {
+            $('#head').css({
+                'background-color': '#FFE082'
+            });
+        };
+
+        var resetDragDesign = function () {
+            $('#head').css({
+                'background-color': '#FFC107'
+            });
+        };
+
         // ドロップ領域はタイトルヘッダ
         $('#head').bind('drop', e => {
+            resetDragDesign();
+            // ファイル読み込み処理
             e.preventDefault();
             var files = e.originalEvent.dataTransfer.files;
             var reader = new FileReader();
@@ -474,8 +488,13 @@ class CanvasEditor {
 
             reader.readAsDataURL(file);
         }).bind('dragenter', e => {
+            // ドロップ領域に入ったことを表すデザインを適用
+            setDragDesign();
             return false;
         }).bind('dragover', e => {
+            return false;
+        }).bind('dragleave', e => {
+            resetDragDesign();
             return false;
         });
     }
