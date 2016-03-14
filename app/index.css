@@ -154,3 +154,9 @@ body {
     bottom: 14px;
     right: 14px;
 }
+
+.link-to-blog {
+    color: #999;
+    font-size: 9pt;
+    margin-right: 12px;
+}
