@@ -178,27 +178,42 @@ class CanvasEditor {
         this.imageUri = val;
         var canvas = this.$canvas[0];
         var stage = this.$stage[0];
+        var photoUrlBox = $('#photo-uri')[0];
         var self = this;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', val, true);
-        xhr.responseType = 'blob';
-        xhr.onload = function (e) {
-            var img = new Image();
-            img.className = 'original';
-            img.onload = () => {
-                self.editCtxImg = img;
-                var w = img.offsetWidth;
-                var h = img.offsetHeight;
-                var size = self._setSize(w, h, canvas, stage);
-                self.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
-                self.updateCropCtx();
-                self.setCanvasPosition();
-            }
-            img.src = window.URL.createObjectURL(this.response);
-            self.$stage[0].appendChild(img);
-        };
-        xhr.send();
+        if (val.match(/^data:image.*/)) {
+            // base64エンコードされた画像を表示
+            var img = $('#hidden-img')[0];
+            img.onload = function (e) {
+                self._src(img, canvas, stage);
+            };
+            img.src = val;
+        }else {
+            // 画像のURLにアクセスして表示
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', val, true);
+            xhr.responseType = 'blob';
+            xhr.onload = function (e) {
+                var img = new Image();
+                img.className = 'original';
+                img.onload = () => {
+                    self._src(img, canvas, stage);
+                }
+                img.src = window.URL.createObjectURL(this.response);
+                self.$stage[0].appendChild(img);
+            };
+            xhr.send();
+        }
+    }
+
+    _src (img, canvas, stage) {
+        this.editCtxImg = img;
+        var w = img.offsetWidth;
+        var h = img.offsetHeight;
+        var size = this._setSize(w, h, canvas, stage);
+        this.editCtx.drawImage(img, 0, 0, w, h, 0, 0, size.width, size.height);
+        this.updateCropCtx();
+        this.setCanvasPosition();
     }
 
     /* 最終的に出力する横幅 */
@@ -283,14 +298,19 @@ class CanvasEditor {
     }
 
     bindEvents () {
+        // 切り取り高さの変更を反映する
         $('#resH').on('change', (e) => {
             var h = +e.target.value;
             this.setResHeight(h);
         });
+
+        // 切り取り幅の変更を反映する
         $('#resW').on('change', (e) => {
             var w = +e.target.value;
             this.setResWidth(w);
         });
+
+        // 入力されたURLの画像を読み込む
         $('#btn-photo-uri').on('click', (e) => {
             var uri = $('#photo-uri')[0].value || '';
             if (uri !== '') {
@@ -298,8 +318,16 @@ class CanvasEditor {
                 this.highlightSelectedGalleryImage(null);
             }
         });
+
+        // 画像URL入力欄をクリアして，フォーカスする
         $('#head').on('click', (e) => {
+            $('#photo-uri')[0].value = '';
             $('#photo-uri')[0].focus();
+        });
+
+        // 画像URL入力欄をクリアする
+        $('#photo-uri').on('click', (e) => {
+            $('#photo-uri')[0].value = '';
         });
 
         // ギャラリーに追加する
@@ -376,7 +404,7 @@ class CanvasEditor {
             }
             res = JSON.stringify({items: res, version: this.version_photo_cropper}, null, 4);
             var blob = new Blob([res], {type: 'text/plain'});
-            var url = window.webkitURL.createObjectURL(blob);
+            var url = window.URL.createObjectURL(blob);
             var d = new Date();
             var fname = `photocropper-${d.getTime()}.json`;
             $dl_a_tag.attr('download', fname);
@@ -416,6 +444,58 @@ class CanvasEditor {
                 });
             }
             fileReader.readAsText(e.target.files[0]);
+        });
+
+        // 画像ファイルをドラッグアンドドロップで読み込む機能
+        this.bindEvents_PhotoDragLoad();
+    }
+
+    bindEvents_PhotoDragLoad () {
+        var self = this;
+
+        var setDragDesign = function () {
+            $('#head').css({
+                'background-color': '#FFE082'
+            });
+        };
+
+        var resetDragDesign = function () {
+            $('#head').css({
+                'background-color': '#FFC107'
+            });
+        };
+
+        // ドロップ領域はタイトルヘッダ
+        $('#head').bind('drop', e => {
+            resetDragDesign();
+            // ファイル読み込み処理
+            e.preventDefault();
+            var files = e.originalEvent.dataTransfer.files;
+            var reader = new FileReader();
+            if (files.length <= 0) return false;
+
+            // 複数与えられた場合でも，読み込むのは最初のファイルのみ
+            var file = files[0];
+            // MIMEタイプを確認してからbase64コードに変換する
+            if (!file.type.match('image.*')) return false;
+
+            reader.onload = function (e) {
+                var base64code = e.target.result;
+                $('#photo-uri')[0].value = base64code;
+                // 読み込みボタンを自動クリックする
+                $('#btn-photo-uri').click();
+            }
+
+            reader.readAsDataURL(file);
+        }).bind('dragenter', e => {
+            // ドロップ領域に入ったことを表すデザインを適用
+            setDragDesign();
+            return false;
+        }).bind('dragover', e => {
+            return false;
+        }).bind('dragleave', e => {
+            resetDragDesign();
+            return false;
         });
     }
 

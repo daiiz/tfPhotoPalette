@@ -2,7 +2,9 @@
 
 ## 起動前に実行したいコマンドをここに追加します。
 
-babel src/*.js > app/index.es5.js
+babel src/CanvasEditor.js src/index.js > app/index.es5.js
+babel src/play.index.js > app/play.index.es5.js
 
+# --explicitly-allowed-ports=6000
 ## wwwディレクトリの内容をChrome Appとして起動します。
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-and-launch-app=`pwd`/app
