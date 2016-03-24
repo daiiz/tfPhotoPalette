@@ -597,7 +597,21 @@ var openPlayWindow = function openPlayWindow() {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // PlayWindowから受信する
     if (request.type === 'request-base64-img') {
-        var base64code = $('.minfy')[0].toDataURL('image/jpeg');
+        // 要求された種類のcanvas画像をbase64エンコードして返却する
+        var imgSize = request.options.image_size || 'mini';
+        var base64code = '';
+        // オリジナル画像
+        if (imgSize === 'org') {
+            base64code = $('.org')[0].toDataURL('image/jpeg');
+        }
+        // トリミングした画像
+        else if (imgSize === 'crop') {
+                base64code = $('.crop')[0].toDataURL('image/jpeg');
+            }
+            // トリミングしたものを縮小した画像
+            else {
+                    base64code = $('.minfy')[0].toDataURL('image/jpeg');
+                }
         // PlayWindowに返答する
         chrome.runtime.sendMessage({
             type: "base64-img",

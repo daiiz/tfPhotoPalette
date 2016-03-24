@@ -18,9 +18,13 @@ var bindEvents = () => {
 
     // 分類実行ボタンがクリックされたとき
     $('#btn-classify').on('click', e => {
+        var imgSize = $('#select-img-size')[0].value;
         // backgroundに対して，minifyされた画像のbase64コードを要求する
         chrome.runtime.sendMessage({
-            type: "request-base64-img"
+            type: "request-base64-img",
+            options: {
+                image_size: imgSize
+            }
         }, null);
     });
 }
