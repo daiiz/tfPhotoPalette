@@ -27,6 +27,12 @@ body {
     left: 22px;
 }
 
+#select-img-size {
+    position: relative;
+    top: 20px;
+    left: 20px;
+}
+
 #res-panel {
     position: fixed;
     width: 100px;
