@@ -42,13 +42,14 @@ var showDetailJSON = (json) => {
 }
 
 // 分類実行
-var classify = (base64jpg) => {
+var classify = (base64jpg, photo_type) => {
     $('#ans').text('');
     var appUrl = 'http://localhost:52892/api/classify';
     $.ajax({
         url: appUrl,
         data: JSON.stringify({
-            jpg: base64jpg
+            jpg: base64jpg,
+            photo_type: photo_type
         }),
         type: "POST",
         contentType:'application/json',
@@ -67,8 +68,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // MainWindowから受信する
     if (request.type === 'base64-img') {
         var base64code = request.body;
+        var photo_type = request.photo_type;
         $('#cropped-img')[0].src = base64code;
-        classify(base64code);
+        classify(base64code, photo_type);
     }
 });
 

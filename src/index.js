@@ -25,23 +25,28 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'request-base64-img') {
         // 要求された種類のcanvas画像をbase64エンコードして返却する
         var imgSize = request.options.image_size || 'mini';
+        var photo_type = '';
         var base64code = '';
         // オリジナル画像
         if (imgSize === 'org') {
             base64code = $('.org')[0].toDataURL('image/jpeg');
+            photo_type = 'original';
         }
         // トリミングした画像
         else if (imgSize === 'crop') {
             base64code = $('.crop')[0].toDataURL('image/jpeg');
+            photo_type = 'cropped';
         }
         // トリミングしたものを縮小した画像
         else {
             base64code = $('.minfy')[0].toDataURL('image/jpeg');
+            photo_type = 'reduced';
         }
         // PlayWindowに返答する
         chrome.runtime.sendMessage({
             type: "base64-img",
-            body: base64code
+            body: base64code,
+            photo_type: photo_type
         }, null);
     }
 });
